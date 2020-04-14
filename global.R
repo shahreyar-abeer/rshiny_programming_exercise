@@ -24,28 +24,18 @@ test_list = unique(data_lab_vals$lbtestcd)
 
 ## function to make plot2
 make_plot2 = function(df, df2, test) {
-  remaining_tests = test_list[test_list != test]
-  #print(str(df))
-  p2 = df %>%
-    filter(lbtestcd == remaining_tests[1]) %>% 
+  df %>%
+    filter(lbtestcd == test) %>% 
     ggplot(aes(x = avisit, y = aval, group = 1)) +
     geom_path(color = "#1F77B4", size = .75) +
     geom_point(size = 4, color = "#1F77B4") +
     scale_x_discrete(limits = df2$avisit) +
+    xlab("Visit") +
+    ylab(glue("{df$avalu[df$lbtestcd == test][1]}")) +
     ylim(0, 80) +
     ggthemes::theme_pander() +
-    labs(title = glue("{remaining_tests[1]} test scores"))
-    p3 = df %>%
-      filter(lbtestcd == remaining_tests[2]) %>% 
-      ggplot(aes(x = avisit, y = aval, group = 1)) +
-      geom_path(color = "#1F77B4", size = .75) +
-      geom_point(size = 4, color = "#1F77B4") +
-      scale_x_discrete(limits = df2$avisit) +
-      ylim(0, 80) +
-      ggthemes::theme_pander() +
-      labs(title = glue("{remaining_tests[2]} test scores"))
-    
-    p2 | p3
+    labs(title = glue("{test} test scores for the patient"))
 }
+
 
 
