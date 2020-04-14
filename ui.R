@@ -34,10 +34,24 @@ ui = dashboardPage(
                             br(),
                             gt_output("patient_data")
                         )
+                    ),
+                    fluidRow(
+                        column(
+                            width = 12,
+                            plotOutput("plot2")
+                        )
                     )
                 ),
                 tabPanel(
-                    title = "Plot2"
+                    title = "Plot2",
+                    fluidRow(
+                        column(
+                            width = 12
+                            
+                        )
+                    )
+                    
+                    
                 )
             )
         )

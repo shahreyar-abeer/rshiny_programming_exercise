@@ -19,6 +19,11 @@ server = function(input, output) {
             mutate(type = as.factor(ifelse(AVAL >= input$threshold, 1, 2)))
     })
     
+    d2 = reactive({
+        data_merged %>%
+            filter(USUBJID == input$patient)
+    })
+    
     ## a lollipop chart
     output$plot1 = renderPlot({
         d1() %>% 
@@ -33,7 +38,7 @@ server = function(input, output) {
             geom_hline(yintercept = input$threshold, color = "red", linetype = "longdash") +
             ggthemes::theme_hc() +
             labs(title = glue("{input$test} test scores for Patient: {input$patient}"),
-                 subtitle = "The red line indicates threshold value. Values above this line is deemed 'not-normal' by epidemiologists")
+                 subtitle = "The red line indicates threshold value. Simply put, values above this line are not good.")
     })
     
     ## info of the patient
@@ -50,10 +55,21 @@ server = function(input, output) {
     output$patient_data = render_gt({
         p1 = d1() %>% 
             select(AVISIT, AVAL)
+        
         data.frame(t(p1)) %>%
             janitor::row_to_names(1) %>%
             gt() %>% 
             tab_header(title = "Data") %>% 
             opt_table_lines()
+    })
+    
+    output$plot2 = renderPlot({
+        d2() %>% 
+            ggplot(aes(x = AVISIT, y = AVAL, group = 1)) +
+            geom_path(color = "#1F77B4", size = .75) +
+            geom_point(size = 4, color = "#1F77B4") +
+            scale_x_discrete(limits = d2()$AVISIT) +
+            ggthemes::theme_hc() +
+            facet_grid(~LBTESTCD)
     })
 }
