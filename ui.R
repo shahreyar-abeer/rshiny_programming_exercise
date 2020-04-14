@@ -13,7 +13,8 @@ ui = dashboardPage(
         div(h4("Inputs"), align = "center"),
         uiOutput("inp_patient"),
         uiOutput("inp_test"),
-        numericInput("threshold", "Threshold", min = 0, max = 100, value = 50)
+        numericInput("threshold", "Threshold (Determined by experts)", min = 0, max = 100, value = 50),
+        checkboxInput("show_others", "Show the other tests (for comparison)")
     ),
     
     dashboardBody(
@@ -22,7 +23,7 @@ ui = dashboardPage(
                 id = "tabs",
                 width = 12,
                 tabPanel(
-                    title = "Plot1",
+                    title = "Patient by Patient",
                     fluidRow(
                         column(
                             width = 6,
