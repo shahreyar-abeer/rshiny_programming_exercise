@@ -25,12 +25,14 @@ ui = dashboardPage(
                     title = "Plot1",
                     fluidRow(
                         column(
-                            width = 7,
+                            width = 6,
                             plotOutput("plot1")
                         ),
                         column(
-                            width = 5,
-                            gt_output("patient_info")
+                            width = 6,
+                            gt_output("patient_info"),
+                            br(),
+                            gt_output("patient_data")
                         )
                     )
                 ),
