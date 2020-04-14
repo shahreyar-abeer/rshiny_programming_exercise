@@ -13,7 +13,7 @@ ui = dashboardPage(
         div(h4("Inputs"), align = "center"),
         uiOutput("inp_patient"),
         uiOutput("inp_test"),
-        numericInput("threshold", "Threshold (Determined by experts)", min = 0, max = 100, value = 50),
+        numericInput("threshold", "Threshold (To be determined by experts)", min = 0, max = 100, value = 50),
         checkboxInput("show_others", "Show the other tests (for comparison)")
     ),
     
