@@ -5,6 +5,8 @@ library(shinydashboard)
 
 ui = dashboardPage(
     
+    #useshinyjs(),
+    
     dashboardHeader(
         title = "Some Cool Name"
     ),
@@ -13,7 +15,8 @@ ui = dashboardPage(
         div(h4("Inputs"), align = "center"),
         uiOutput("inp_patient"),
         uiOutput("inp_test"),
-        numericInput("threshold", "Threshold (To be determined by experts)", min = 0, max = 100, value = 50),
+        checkboxInput("switch", "Threshold?"),
+        uiOutput("inp_threshold"),
         checkboxInput("show_others", "Show the other tests (for comparison)")
     ),
     
