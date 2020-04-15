@@ -2,7 +2,7 @@
 
 ## required libraries
 req_libs = c("tidyverse", "gt", "janitor", "glue", "patchwork",
-             "ggeasy")
+             "ggeasy", "shinyjs")
 pacman::p_load(char = req_libs)
 
 ## reading the data
