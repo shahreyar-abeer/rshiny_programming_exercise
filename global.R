@@ -1,9 +1,13 @@
 
 
+## installing pacman
+if (!require("pacman")) install.packages("pacman")
+
 ## required libraries
-req_libs = c("tidyverse", "gt", "janitor", "glue", "patchwork",
-             "ggeasy", "shinyjs")
-pacman::p_load(char = req_libs)
+# req_libs = c("tidyverse", "gt", "janitor", "glue", "patchwork",
+#              "ggeasy", "shinyjs", "ggthemes")
+pacman::p_load(shiny, shinydashboard, tidyverse, gt, janitor,
+               glue, patchwork, ggeasy, shinyjs, ggthemes)
 
 ## reading the data
 data_patient = read_tsv("./Random_PatientLevelInfo_2020.tsv")
@@ -23,7 +27,7 @@ patient_list = unique(data_patient$usubjid)
 test_list = unique(data_lab_vals$lbtestcd)
 
 ## function to make plot2
-make_plot2 = function(df, df2, test) {
+make_plot1b = function(df, df2, test) {
   df %>%
     filter(lbtestcd == test) %>% 
     ggplot(aes(x = avisit, y = aval, group = 1)) +
@@ -31,11 +35,13 @@ make_plot2 = function(df, df2, test) {
     geom_point(size = 4, color = "#1F77B4") +
     scale_x_discrete(limits = df2$avisit) +
     xlab("Visit") +
-    ylab(glue("{df$avalu[df$lbtestcd == test][1]}")) +
+    ylab(glue("Measurment ({df$avalu[df$lbtestcd == test][1]})")) +
     ylim(0, 80) +
-    ggthemes::theme_pander() +
-    labs(title = glue("{test} test scores for the patient"))
+    theme_pander() +
+    labs(title = glue("{test} Lab Measurments for the patient"))
 }
 
+## list of variables for analysis
+var_list = c("age", "sex", "race", "actarm")
 
 

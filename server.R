@@ -3,7 +3,23 @@
 
 server = function(input, output) {
     
-    ## if threshold is selected
+    ##--------------------------------------------------
+    ## tab1
+    
+    ## show inputs based on active tab
+    observeEvent(input$tabs, {
+        if (input$tabs == "Patient by Patient") {
+            hide("tab2_inputs", anim = T, animType = "fade")
+            delay(500, show("tab1_inputs", anim = T))
+        }
+        else {
+            hide("tab1_inputs", anim = T, animType = "fade")
+            delay(500, show("tab2_inputs", anim = T))
+        }
+            
+    })
+    
+    ## if threshold is checked
     output$inp_threshold = renderUI({
         if (input$switch)
             numericInput("threshold", "Threshold (To be determined by experts)", min = 0, max = 100, value = 50)
@@ -19,21 +35,24 @@ server = function(input, output) {
         selectizeInput(inputId = "test", label = "Test", choices = test_list)
     })
     
-    ## data for p1
+    ## data for plot1
     d1 = reactive({
+        req(input$patient)
         data_merged %>%
             filter(usubjid == input$patient, lbtestcd == input$test) %>% 
             mutate(type = as.factor(c(1, (ifelse(aval[2:7] >= input$threshold, 2, 3)))))
     })
     
-    ## data for p2
+    ## data for plot2
     d2 = reactive({
+        req(input$patient)
         data_merged %>%
             filter(usubjid == input$patient)
     })
     
     ## the first plot
     output$plot1 = renderPlot({
+        
         wh = which(d1()$lbtestcd == input$test)
         d1() %>% 
             ggplot(aes(x = avisit, y = aval, group = 1)) +
@@ -45,21 +64,21 @@ server = function(input, output) {
             scale_color_manual(values = c("1" = "grey", "2" = "red", "3" = "#1F77B4"), name = "",
                                labels = c("1" = "Screening", "2" = "Above threshold", "3" = "Below threshold")) +
             xlab("Visit") +
-            ylab(glue("{d1()$avalu[wh][1]}")) +
+            ylab(glue("Measurment ({d1()$avalu[wh][1]})")) +
             scale_x_discrete(limits = d1()$avisit) +
             ylim(0, max(d1()$aval + 20)) +
             {if (input$switch) geom_hline(yintercept = input$threshold, color = "red", linetype = "longdash")} +
-            ggthemes::theme_pander() +
-            easy_legend_at("bottom") +
-            labs(title = glue("{input$test} lab measurment for patient: {input$patient} across visits.")) +
-            {if (input$switch) labs(subtitle = "The red line indicates threshold value. Simply put, values above this line show an element of risk.")}
+            labs(title = glue("{input$test} Lab Measurments for Patient: {input$patient} across visits.")) +
+            {if (input$switch) labs(subtitle = "The red line indicates threshold value. Simply put, values above this line show an element of risk.")} +
+            theme_pander() +
+            easy_legend_at("bottom") 
                  
     })
     
     ## patient info
     output$patient_info = render_gt({
         d1() %>% 
-            select(studyid, bmrkr1, bmrkr2, age, sex, race, actarm, lbcat) %>%
+            select(studyid, age, sex, race, bmrkr1, bmrkr2, actarm, lbcat) %>%
             slice(1) %>% 
             gt() %>%
             tab_header(title = "Patient Profile", subtitle = glue("Patient ID: {input$patient}")) %>% 
@@ -69,21 +88,42 @@ server = function(input, output) {
     ## patient data
     output$patient_data = render_gt({
         p1 = d1() %>% 
-            select(avisit, aval)
+            select(avisit, aval) %>% 
+            mutate(aval = round(aval, 2))
         
         wh = which(d1()$lbtestcd == input$test)
         data.frame(t(p1)) %>%
-            janitor::row_to_names(1) %>%
+            row_to_names(1) %>%
             gt() %>% 
             tab_header(title = "Lab Measurments", subtitle = glue("Test: {d1()$lbtest[wh][1]}, ({d1()$avalu[wh][1]})")) %>% 
             opt_table_lines()
     })
     
-    ## second plot, joins using patchwork's '|'
-    output$plot2 = renderPlot({
+    ## second plot on first tab, joins using patchwork's '|'
+    output$plot1b = renderPlot({
         if (input$show_others) {
             remaining_tests = test_list[test_list != input$test]
-            make_plot2(d2(), d1(), remaining_tests[1]) | make_plot2(d2(), d1(), remaining_tests[2])
+            make_plot1b(d2(), d1(), remaining_tests[1]) | make_plot1b(d2(), d1(), remaining_tests[2])
         }
+    })
+    
+    ##----------------------------------------------------------
+    ## tab2
+    
+    ## variable to select for showing association
+    output$inp2_var1 = renderUI({
+        selectizeInput("var1", "Choose a variable", choices = var_list)
+    })
+    
+    ## plot2
+    output$plot2 = renderPlot({
+        req(input$var1)
+        var1 = as.symbol(input$var1)
+        var1 = enquo(var1)
+        #print(var1)
+        data_merged %>% 
+            ggplot(aes(x = !!var1, y = aval)) +
+            geom_boxplot(aes(fill = lbtestcd)) +
+            theme_pander()
     })
 }

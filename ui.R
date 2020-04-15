@@ -1,11 +1,7 @@
 
 
-library(shiny)
-library(shinydashboard)
 
 ui = dashboardPage(
-    
-    #useshinyjs(),
     
     dashboardHeader(
         title = "Some Cool Name"
@@ -13,14 +9,22 @@ ui = dashboardPage(
     
     dashboardSidebar(
         div(h4("Inputs"), align = "center"),
-        uiOutput("inp_patient"),
-        uiOutput("inp_test"),
-        checkboxInput("switch", "Threshold?"),
-        uiOutput("inp_threshold"),
-        checkboxInput("show_others", "Show the other tests (for comparison)")
+        div(
+            id = "tab1_inputs",
+            uiOutput("inp_patient"),
+            uiOutput("inp_test"),
+            checkboxInput("switch", "Threshold?"),
+            uiOutput("inp_threshold"),
+            checkboxInput("show_others", "Show the other tests")
+        ),
+        hidden(div(
+            id = "tab2_inputs",
+            uiOutput("inp2_var1")
+        ))
     ),
     
     dashboardBody(
+        useShinyjs(),  # needed to use shinyjs
         fluidRow(
             tabBox(
                 id = "tabs",
@@ -42,16 +46,16 @@ ui = dashboardPage(
                     fluidRow(
                         column(
                             width = 12,
-                            plotOutput("plot2")
+                            plotOutput("plot1b")
                         )
                     )
                 ),
                 tabPanel(
-                    title = "Plot2",
+                    title = "Overall",
                     fluidRow(
                         column(
-                            width = 12
-                            
+                            width = 12,
+                            plotOutput("plot2")
                         )
                     )
                     
