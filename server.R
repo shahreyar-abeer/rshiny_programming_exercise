@@ -3,6 +3,12 @@
 
 server = function(input, output) {
     
+    ## if threshold is selected
+    output$inp_threshold = renderUI({
+        if (input$switch)
+            numericInput("threshold", "Threshold (To be determined by experts)", min = 0, max = 100, value = 50)
+    })
+    
     ## select patient
     output$inp_patient = renderUI({
         selectizeInput(inputId = "patient", label = "Patient ID", choices = patient_list)
@@ -32,27 +38,31 @@ server = function(input, output) {
         d1() %>% 
             ggplot(aes(x = avisit, y = aval, group = 1)) +
             geom_path(color = "#1F77B4", size = .75) +
-            geom_point(aes(color = d1()$type), size = 4, show.legend = T) +
+            {
+                if (input$switch) geom_point(aes(color = d1()$type), size = 4, show.legend = T)
+                else geom_point(size = 4, color = "#1F77B4", show.legend = F)
+            } +
             scale_color_manual(values = c("1" = "grey", "2" = "red", "3" = "#1F77B4"), name = "",
                                labels = c("1" = "Screening", "2" = "Above threshold", "3" = "Below threshold")) +
             xlab("Visit") +
             ylab(glue("{d1()$avalu[wh][1]}")) +
             scale_x_discrete(limits = d1()$avisit) +
             ylim(0, max(d1()$aval + 20)) +
-            geom_hline(yintercept = input$threshold, color = "red", linetype = "longdash") +
+            {if (input$switch) geom_hline(yintercept = input$threshold, color = "red", linetype = "longdash")} +
             ggthemes::theme_pander() +
             easy_legend_at("bottom") +
-            labs(title = glue("{input$test} test scores for Patient: {input$patient}"),
-                 subtitle = "The red line indicates threshold value. Simply put, values above this line are not good.")
+            labs(title = glue("{input$test} lab measurment for patient: {input$patient} across visits.")) +
+            {if (input$switch) labs(subtitle = "The red line indicates threshold value. Simply put, values above this line show an element of risk.")}
+                 
     })
     
     ## patient info
     output$patient_info = render_gt({
         d1() %>% 
-            select(bmrkr1, bmrkr2, age, sex, race, actarm, lbcat) %>%
+            select(studyid, bmrkr1, bmrkr2, age, sex, race, actarm, lbcat) %>%
             slice(1) %>% 
             gt() %>%
-            tab_header(title = "Patient Details", subtitle = glue("Patient ID: {input$patient}")) %>% 
+            tab_header(title = "Patient Profile", subtitle = glue("Patient ID: {input$patient}")) %>% 
             opt_table_lines()
     })
     
@@ -65,7 +75,7 @@ server = function(input, output) {
         data.frame(t(p1)) %>%
             janitor::row_to_names(1) %>%
             gt() %>% 
-            tab_header(title = "Test Scores", subtitle = glue("Test: {d1()$lbtest[wh][1]}, ({d1()$avalu[wh][1]})")) %>% 
+            tab_header(title = "Lab Measurments", subtitle = glue("Test: {d1()$lbtest[wh][1]}, ({d1()$avalu[wh][1]})")) %>% 
             opt_table_lines()
     })
     
