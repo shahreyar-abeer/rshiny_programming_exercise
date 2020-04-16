@@ -27,10 +27,15 @@ ui = dashboardPage(
             id = "tab2_inputs",
             uiOutput("inp2_var1"),
             div(
+                id = "discrete_vars",
                 checkboxInput("box", "Boxplot", value = TRUE),
-                checkboxInput("violin", "Violinplot", value = TRUE),
-                checkboxInput("show_color", "Show color", value = FALSE)
-            )
+                checkboxInput("violin", "Violinplot", value = TRUE)
+            ),
+            div(
+                id = "continuous_vars",
+                checkboxInput("regression_line", "Regression line")
+            ),
+            checkboxInput("show_color", "Show some colors!", value = FALSE)
         ))
     ),
     
