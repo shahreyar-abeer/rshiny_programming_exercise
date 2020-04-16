@@ -44,7 +44,7 @@ data_merged %>%
   geom_label(aes(label = round(AVAL, 1)), alpha = .1, vjust = -.2, hjust = .2)
 
 
-p1 = data_merged %>% filter(USUBJID == "AB12345-CHN-11-id-172", LBTESTCD == "CRP") %>% select(AVISIT, AVAL)
+p1 = data_merged %>% filter(usubjid == "AB12345-CHN-11-id-172") %>% select(avisit, lbtestcd, aval)
 t(p1)[2:3,]
 
 p1 %>%
@@ -60,3 +60,28 @@ d1() %>%
   scale_x_discrete(limits = d1()$AVISIT) +
   labs(title = glue("{input$test} test scores for the patient"),
        subtitle = "The red line indicates threshold value. Values above this line is deemed 'not-normal' by epidemiologists")
+
+
+theme_discrete_chart <- function(...) {
+  t <- theme_minimal(...) +
+    theme(
+      panel.grid.minor.y = element_blank(),
+      panel.grid.minor.x = element_blank(),
+      panel.grid.major.x = element_blank(),
+      panel.grid.major.y = element_line(),
+      strip.background = element_rect(fill = "gray", color = "gray"),
+      strip.text = element_text(margin = margin(1, 0, 1, 0, "mm"))
+    ) +
+    easy_legend_at("bottom") +
+    labs_pubr()
+}
+
+
+ggstatsplot::ggbetweenstats(data = data_merged %>% filter(lbtestcd == "ALT"),
+                            x = race,
+                            y = aval,
+                            plot.type = "box",
+                            bf.message = F,
+                            results.subtitle = F,
+                            ggtheme = hrbrthemes::theme_ipsum_tw(),
+                            ggstatsplot.layer = F)
