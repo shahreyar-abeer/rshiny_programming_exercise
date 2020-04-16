@@ -14,22 +14,24 @@ ui = dashboardPage(
     ## sidebar
     
     dashboardSidebar(
-        div(h4("Inputs"), align = "center"),
         div(
             id = "tab1_inputs",
+            div(h4("Inputs"), align = "center"),
             uiOutput("inp_patient"),
             uiOutput("inp_test"),
-            checkboxInput("switch", "Threshold?"),
-            uiOutput("inp_threshold"),
-            checkboxInput("show_others", "Show all tests")
+            checkboxInput("show_threshold", "Threshold?"),
+            hidden(numericInput("threshold", "Threshold (To be determined by experts)",
+                         min = 0, max = 100, value = 50)),
+            checkboxInput("show_others", "Show the other tests")
         ),
         hidden(div(
             id = "tab2_inputs",
+            div(h4("Inputs"), align = "center"),
             uiOutput("inp2_var1"),
             div(
                 id = "discrete_vars",
                 checkboxInput("box", "Boxplot", value = TRUE),
-                checkboxInput("violin", "Violinplot", value = TRUE)
+                checkboxInput("violin", "Violinplot", value = FALSE)
             ),
             div(
                 id = "continuous_vars",
@@ -39,7 +41,6 @@ ui = dashboardPage(
             checkboxInput("single_test_analysis",
                           "I'd like to do the analysis by single Lab Measurments"),
             uiOutput("inp_test2")
-            
         ))
     ),
     
@@ -48,9 +49,6 @@ ui = dashboardPage(
     
     dashboardBody(
         useShinyjs(),  # needed to use shinyjs
-        options(spinner.type = 2,
-                spinner.color = "#1F77B4",
-                spinner.color.background = "white"), # spinner options
         fluidRow(
             tabBox(
                 id = "tabs",
@@ -62,30 +60,30 @@ ui = dashboardPage(
                     fluidRow(
                         column(
                             width = 6,
-                            plotOutput("plot1") %>% withSpinner()
+                            plotOutput("plot1")
                         ),
                         column(
                             width = 6,
-                            gt_output("patient_info") %>% withSpinner(),
+                            gt_output("patient_info"),
                             br(),
-                            gt_output("patient_data") %>% withSpinner()
+                            gt_output("patient_data")
                         )
                     ),
                     fluidRow(
                         column(
                             width = 12,
-                            plotOutput("plot1b") %>% withSpinner()
+                            plotOutput("plot1b")
                         )
                     )
                 ),
                 #------------------------------------------------------
                 #tab2
                 tabPanel(
-                    title = "Overall",
+                    title = "Finding Overall Patterns",
                     fluidRow(
                         column(
                             width = 12,
-                            plotOutput("plot2", height = 570) %>% withSpinner()
+                            plotOutput("plot2", height = 570)
                         )
                     )
                 )
