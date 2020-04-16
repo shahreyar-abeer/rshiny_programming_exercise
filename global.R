@@ -5,7 +5,7 @@ if (!require("pacman")) install.packages("pacman")
 
 ## required libraries, pacman takes care of the installation
 pacman::p_load(shiny, shinydashboard, tidyverse, gt, janitor,
-               glue, patchwork, ggeasy, shinyjs, ggpubr, shinycssloaders)
+               glue, patchwork, ggeasy, shinyjs, ggpubr)
 
 ## reading the data
 data_patient = read_tsv("./Random_PatientLevelInfo_2020.tsv")
@@ -16,7 +16,9 @@ data_patient = data_patient %>% clean_names()
 data_lab_vals = data_lab_vals %>% clean_names()
 
 ## joining them
-data_merged = right_join(data_patient, data_lab_vals, by = c("usubjid", "studyid"))
+data_merged = right_join(data_patient, data_lab_vals, by = c("usubjid", "studyid")) %>% 
+  mutate(aval = round(aval, 1),
+         bmrkr1 = round(bmrkr1, 1))
 
 ## list of patients
 patient_list = unique(data_patient$usubjid)
@@ -59,16 +61,16 @@ make_plot1b = function(df, df2, test) {
     geom_point(size = 4, color = "#1F77B4") +
     scale_x_discrete(limits = df2$avisit) +
     xlab("Visit") +
-    ylab(glue("Value ({df$avalu[df$lbtestcd == test][1]})")) +
+    ylab(glue("Lab Measurment value ({df$avalu[df$lbtestcd == test][1]})")) +
     ylim(0, 80) +
     labs(title = glue("{test} Lab Measurments for the patient across visits")) +
     theme1()
 }
 
 ## list of variables for analysis
-var_list = c("Biomarker 1 (cont.)" = "bmrkr1", "Biomarker 2 (disc.)" = "bmrkr2",
-             "Age (cont.)" = "age", "Sex (disc.)" = "sex", "Race (disc.)" = "race",
-             "Actarm (disc.)" = "actarm", "Test Values (var of interest)" = "aval")
+var_list = c("Biomarker-1" = "bmrkr1", "Biomarker-2" = "bmrkr2",
+             "Age" = "age", "Sex" = "sex", "Race" = "race",
+             "Actarm" = "actarm", "Lab Measurment Values" = "aval")
 
 ## continuous variables
 cont_vars = c("age", "bmrkr1")
