@@ -3,9 +3,15 @@
 
 ui = dashboardPage(
     
+    ##-----------------------------------------------------------------
+    ## header
+    
     dashboardHeader(
         title = "Some Cool Name"
     ),
+    
+    ##-----------------------------------------------------------------
+    ## sidebar
     
     dashboardSidebar(
         div(h4("Inputs"), align = "center"),
@@ -15,13 +21,21 @@ ui = dashboardPage(
             uiOutput("inp_test"),
             checkboxInput("switch", "Threshold?"),
             uiOutput("inp_threshold"),
-            checkboxInput("show_others", "Show the other tests")
+            checkboxInput("show_others", "Show all tests")
         ),
         hidden(div(
             id = "tab2_inputs",
-            uiOutput("inp2_var1")
+            uiOutput("inp2_var1"),
+            div(
+                checkboxInput("box", "Boxplot", value = TRUE),
+                checkboxInput("violin", "Violinplot", value = TRUE),
+                checkboxInput("show_color", "Show color", value = FALSE)
+            )
         ))
     ),
+    
+    ##-----------------------------------------------------------------
+    ## body
     
     dashboardBody(
         useShinyjs(),  # needed to use shinyjs
@@ -29,6 +43,8 @@ ui = dashboardPage(
             tabBox(
                 id = "tabs",
                 width = 12,
+                #------------------------------------------------------
+                # tab1
                 tabPanel(
                     title = "Patient by Patient",
                     fluidRow(
@@ -50,16 +66,16 @@ ui = dashboardPage(
                         )
                     )
                 ),
+                #------------------------------------------------------
+                #tab2
                 tabPanel(
                     title = "Overall",
                     fluidRow(
                         column(
                             width = 12,
-                            plotOutput("plot2")
+                            plotOutput("plot2", height = 570)
                         )
                     )
-                    
-                    
                 )
             )
         )
