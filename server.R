@@ -70,8 +70,7 @@ server = function(input, output) {
             {if (input$switch) geom_hline(yintercept = input$threshold, color = "red", linetype = "longdash")} +
             labs(title = glue("{input$test} Lab Measurments for Patient: {input$patient} across visits.")) +
             {if (input$switch) labs(subtitle = "The red line indicates threshold value. Simply put, values above this line show an element of risk.")} +
-            theme_pander() +
-            easy_legend_at("bottom") 
+            theme_discrete_chart()
                  
     })
     
@@ -87,16 +86,31 @@ server = function(input, output) {
     
     ## patient data
     output$patient_data = render_gt({
-        p1 = d1() %>% 
-            select(avisit, aval) %>% 
-            mutate(aval = round(aval, 2))
+        if (!input$show_others) {
+            p1 = d1() %>% 
+                select(avisit, aval) %>% 
+                mutate(aval = round(aval, 1))
+            
+            wh = which(d1()$lbtestcd == input$test)
+            data.frame(t(p1)) %>%
+                row_to_names(1) %>%
+                gt() %>% 
+                tab_header(title = "Lab Measurments", subtitle = glue("Test: {d1()$lbtest[wh][1]}, ({d1()$avalu[wh][1]})")) %>% 
+                opt_table_lines()
+        }
+        else {
+            data_merged %>% 
+                filter(usubjid == input$patient) %>% 
+                mutate(lbtestcd = glue("{lbtestcd}({avalu})")) %>% 
+                select(avisit, lbtestcd, aval) %>%
+                pivot_wider(id_cols = lbtestcd, names_from = avisit, values_from = aval) %>%
+                gt(rowname_col = "lbtestcd") %>% 
+                tab_stubhead("Test (unit)") %>% 
+                tab_header(title = "Lab Measurments") %>% 
+                fmt_number(columns = everything(), decimal = 1) %>% 
+                opt_table_lines()
+        }
         
-        wh = which(d1()$lbtestcd == input$test)
-        data.frame(t(p1)) %>%
-            row_to_names(1) %>%
-            gt() %>% 
-            tab_header(title = "Lab Measurments", subtitle = glue("Test: {d1()$lbtest[wh][1]}, ({d1()$avalu[wh][1]})")) %>% 
-            opt_table_lines()
     })
     
     ## second plot on first tab, joins using patchwork's '|'
@@ -112,18 +126,54 @@ server = function(input, output) {
     
     ## variable to select for showing association
     output$inp2_var1 = renderUI({
-        selectizeInput("var1", "Choose a variable", choices = var_list)
+        selectizeInput("var1", "Choose a variable", choices = var_list, selected = "aval")
     })
     
     ## plot2
     output$plot2 = renderPlot({
         req(input$var1)
-        var1 = as.symbol(input$var1)
-        var1 = enquo(var1)
-        #print(var1)
-        data_merged %>% 
-            ggplot(aes(x = !!var1, y = aval)) +
-            geom_boxplot(aes(fill = lbtestcd)) +
-            theme_pander()
-    })
+        
+        if (input$var1 == "aval") {
+            data_merged %>%
+                ggplot(aes(x = aval)) + 
+                geom_histogram(bindwidth = 1, color = "black") + 
+                theme_pubr() +
+                facet_grid(lbtestcd ~ .)
+        }
+        else if (input$var1 %notin% cont_vars) {
+            var1 = as.symbol(input$var1)
+            var1 = enquo(var1)
+            #print(var1)
+            data_merged %>%
+                {if (input$show_color) ggplot(aes(x = !!var1, y = aval, fill = lbtestcd))} +
+                {if (!input$show_color) ggplot(aes(x = !!var1, y = aval))} +
+                {if (input$violin) geom_violin(width = .6, position = position_dodge())} +
+                {if (input$box) geom_boxplot(width = .4, position = position_dodge(), alpha = .3)} +
+                
+                scale_fill_viridis_d(alpha = .3, option = "E") +
+                theme_classic() +
+                ggpubr::labs_pubr() +
+                coord_flip() +
+                labs(title = glue("Association of {input$var1} with Lab Measurments")) +
+                facet_grid(~lbtestcd, scales = "fixed")
+        }
+        else {
+            var1 = as.symbol(input$var1)
+            var1 = enquo(var1)
+            #print(var1)
+            data_merged %>%
+                ggplot(aes(x = aval, y = !!var1)) +
+                geom_point() +
+                # {if (input$box) geom_boxplot(width = .4, color = "black", position = position_dodge())} +
+                # {if (input$violin) geom_violin(width = .6, position = position_dodge(), alpha = .4)} +
+                scale_fill_viridis_d(alpha = .3, option = "E") +
+                ggpubr::theme_pubr() +
+                coord_flip() +
+                labs(title = glue("Association of {input$var1} with Lab Measurments")) +
+                facet_grid(~lbtestcd, scales = "fixed")
+        }
+        
+        
+        
+    }, height = 570)
 }
