@@ -7,7 +7,7 @@ if (!require("pacman")) install.packages("pacman")
 # req_libs = c("tidyverse", "gt", "janitor", "glue", "patchwork",
 #              "ggeasy", "shinyjs", "ggthemes")
 pacman::p_load(shiny, shinydashboard, tidyverse, gt, janitor,
-               glue, patchwork, ggeasy, shinyjs, ggthemes)
+               glue, patchwork, ggeasy, shinyjs, ggthemes, ggstatsplot, ggpubr)
 
 ## reading the data
 data_patient = read_tsv("./Random_PatientLevelInfo_2020.tsv")
@@ -37,11 +37,16 @@ make_plot1b = function(df, df2, test) {
     xlab("Visit") +
     ylab(glue("Measurment ({df$avalu[df$lbtestcd == test][1]})")) +
     ylim(0, 80) +
-    theme_pander() +
-    labs(title = glue("{test} Lab Measurments for the patient"))
+    labs(title = glue("{test} Lab Measurments for the patient across visits")) +
+    theme_discrete_chart()
 }
 
 ## list of variables for analysis
-var_list = c("age", "sex", "race", "actarm")
+var_list = c("bmrkr1", "bmrkr2", "age", "sex", "race", "actarm", "aval")
+
+## continuous variables
+cont_vars = c("age", "bmrkr1")
+
+`%notin%` = Negate(`%in%`)
 
 
