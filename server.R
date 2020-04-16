@@ -20,10 +20,9 @@ server = function(input, output, session) {
     })
     
     ## if threshold is checked
-    output$inp_threshold = renderUI({
-        if (input$switch)
-            numericInput("threshold", "Threshold (To be determined by experts)",
-                         min = 0, max = 100, value = 50)
+    observeEvent(input$show_threshold, {
+        if (isTRUE(input$show_threshold)) show("threshold", anim = TRUE)
+        else hide("threshold", anim = TRUE, animType = "fade")
     })
     
     ## select patient
@@ -60,18 +59,18 @@ server = function(input, output, session) {
             ggplot(aes(x = avisit, y = aval, group = 1)) +
             geom_path(color = "#1F77B4", size = .75) +
             {
-                if (input$switch) geom_point(aes(color = d1()$type), size = 4, show.legend = T)
+                if (input$show_threshold) geom_point(aes(color = d1()$type), size = 4, show.legend = T)
                 else geom_point(size = 4, color = "#1F77B4", show.legend = F)
             } +
             scale_color_manual(values = c("1" = "grey", "2" = "red", "3" = "#1F77B4"), name = "",
                                labels = c("1" = "Screening", "2" = "Above threshold", "3" = "Below threshold")) +
             xlab("Visit") +
-            ylab(glue("Value ({d1()$avalu[wh][1]})")) +
+            ylab(glue("Lab Measurment value ({d1()$avalu[wh][1]})")) +
             scale_x_discrete(limits = d1()$avisit) +
             ylim(0, max(d1()$aval + 20)) +
-            {if (input$switch) geom_hline(yintercept = input$threshold, color = "red", linetype = "longdash")} +
+            {if (input$show_threshold) geom_hline(yintercept = input$threshold, color = "red", linetype = "longdash")} +
             labs(title = glue("{input$test} Lab Measurments for Patient: {input$patient} across visits.")) +
-            {if (input$switch) labs(subtitle = "The red line indicates a threshold value.")} +
+            {if (input$show_threshold) labs(subtitle = "The red line indicates a threshold value.")} +
             theme1()
                  
     })
@@ -92,8 +91,7 @@ server = function(input, output, session) {
     output$patient_data = render_gt({
         if (!input$show_others) {
             p1 = d1() %>% 
-                select(avisit, aval) %>% 
-                mutate(aval = round(aval, 1))
+                select(avisit, aval)
             
             wh = which(d1()$lbtestcd == input$test)
             data.frame(t(p1)) %>%
@@ -110,8 +108,7 @@ server = function(input, output, session) {
                 pivot_wider(id_cols = lbtestcd, names_from = avisit, values_from = aval) %>%
                 gt(rowname_col = "lbtestcd") %>% 
                 tab_stubhead("Test (unit)") %>% 
-                tab_header(title = "Lab Measurments") %>% 
-                fmt_number(columns = everything(), decimal = 1) %>% 
+                tab_header(title = "Lab Measurments") %>%
                 opt_table_lines()
         }
         
@@ -183,6 +180,7 @@ server = function(input, output, session) {
         req(input$var1)
         var1 = as.symbol(input$var1)
         var1 = enquo(var1)
+        var_name = names(var_list[var_list == input$var1])
         ## histogram
         if (input$var1 == "aval") {
             d3() %>%
@@ -190,7 +188,7 @@ server = function(input, output, session) {
                 {if (input$show_color) geom_histogram(aes(fill = lbtestcd), bins = 50, color = "black")} +
                 {if (!input$show_color) geom_histogram(bins = 50, color = "black", alpha = .5)} +
                 scale_fill_viridis_d(alpha = .5, option = "E") +
-                xlab("Value") +
+                xlab("Lab Measurment value") +
                 theme2() +
                 labs(title = glue("Distribution of the {ifelse(isTRUE(input$single_test_analysis), glue('{input$test2} Lab Measurment'), 'the 3 Lab Measurments')}")) +
                 facet_grid(lbtestcd ~ .)
@@ -198,15 +196,18 @@ server = function(input, output, session) {
         ## boxplots
         else if (input$var1 %notin% cont_vars) {
             d3() %>%
-                ggplot(aes(x = !!var1, y = aval)) +
+                ggplot(aes(x = reorder(!!var1, aval, FUN = median), y = aval)) +
                 {if (input$violin & input$show_color) geom_violin(aes(fill = lbtestcd), width = .6, position = position_dodge())} +
                 {if (input$violin & !input$show_color) geom_violin(width = .6, position = position_dodge())} +
                 {if (input$box & input$show_color) geom_boxplot(aes(fill = lbtestcd), width = .4, position = position_dodge(), alpha = .3)} +
                 {if (input$box & !input$show_color) geom_boxplot(width = .4, position = position_dodge(), alpha = .3)} +
+                stat_summary(fun = mean, geom = "point", size = 2, color = "#f7347a") +
                 scale_fill_viridis_d(alpha = .4, option = "E") +
                 coord_flip() +
-                labs(title = glue("Distribution of the {ifelse(isTRUE(input$single_test_analysis), glue('{input$test2} Lab Measurment'), 'the 3 Lab Measurments')} sorted by {input$var1}")) +
-                ylab("Value") +
+                labs(title = glue("Distribution of the {ifelse(isTRUE(input$single_test_analysis), glue('{input$test2} Lab Measurment'), 'the 3 Lab Measurments')} sorted by {var_name}"),
+                     caption = "*The pink dot represents mean") +
+                xlab(var_name) +
+                ylab("Lab Measurment value") +
                 theme2() +
                 facet_grid(~lbtestcd, scales = "fixed")
         }
@@ -215,8 +216,9 @@ server = function(input, output, session) {
             d3() %>%
                 ggplot(aes(x = !!var1, y = aval)) +
                 geom_point() +
-                labs(title = glue("Correlation between the {ifelse(isTRUE(input$single_test_analysis), glue('{input$test2} Lab Measurment'), '3 Lab Measurments')} and {input$var1}")) +
-                ylab("Value") +
+                labs(title = glue("Correlation between the {ifelse(isTRUE(input$single_test_analysis), glue('{input$test2} Lab Measurment'), '3 Lab Measurments')} and {var_name}")) +
+                xlab(var_name) +
+                ylab("Lab Measurment value") +
                 theme2() +
                 {if (input$regression_line) geom_smooth(method = "lm", color = "red")} +
                 facet_grid(~lbtestcd, scales = "fixed")
