@@ -3,7 +3,7 @@
 
 server = function(input, output) {
     
-    ##--------------------------------------------------
+    ##-----------------------------------------------------------------------------------
     ## tab1
     
     ## show inputs based on active tab
@@ -22,7 +22,8 @@ server = function(input, output) {
     ## if threshold is checked
     output$inp_threshold = renderUI({
         if (input$switch)
-            numericInput("threshold", "Threshold (To be determined by experts)", min = 0, max = 100, value = 50)
+            numericInput("threshold", "Threshold (To be determined by experts)",
+                         min = 0, max = 100, value = 50)
     })
     
     ## select patient
@@ -50,7 +51,8 @@ server = function(input, output) {
             filter(usubjid == input$patient)
     })
     
-    ## the first plot
+    ##-----------------------------------------------------------------------------------
+    ## plot1
     output$plot1 = renderPlot({
         
         wh = which(d1()$lbtestcd == input$test)
@@ -64,16 +66,17 @@ server = function(input, output) {
             scale_color_manual(values = c("1" = "grey", "2" = "red", "3" = "#1F77B4"), name = "",
                                labels = c("1" = "Screening", "2" = "Above threshold", "3" = "Below threshold")) +
             xlab("Visit") +
-            ylab(glue("Measurment ({d1()$avalu[wh][1]})")) +
+            ylab(glue("Value ({d1()$avalu[wh][1]})")) +
             scale_x_discrete(limits = d1()$avisit) +
             ylim(0, max(d1()$aval + 20)) +
             {if (input$switch) geom_hline(yintercept = input$threshold, color = "red", linetype = "longdash")} +
             labs(title = glue("{input$test} Lab Measurments for Patient: {input$patient} across visits.")) +
-            {if (input$switch) labs(subtitle = "The red line indicates threshold value. Simply put, values above this line show an element of risk.")} +
-            theme_discrete_chart()
+            {if (input$switch) labs(subtitle = "The red line indicates a threshold value.")} +
+            theme1()
                  
     })
     
+    ##-----------------------------------------------------------------------------------
     ## patient info
     output$patient_info = render_gt({
         d1() %>% 
@@ -84,6 +87,7 @@ server = function(input, output) {
             opt_table_lines()
     })
     
+    ##-----------------------------------------------------------------------------------
     ## patient data
     output$patient_data = render_gt({
         if (!input$show_others) {
@@ -112,7 +116,7 @@ server = function(input, output) {
         }
         
     })
-    
+     ##----------------------------------------------------------------------------------
     ## second plot on first tab, joins using patchwork's '|'
     output$plot1b = renderPlot({
         if (input$show_others) {
@@ -121,7 +125,7 @@ server = function(input, output) {
         }
     })
     
-    ##----------------------------------------------------------
+    ##------------------------------------------------------------------------------------
     ## tab2
     
     ## variable to select for showing association
@@ -129,51 +133,70 @@ server = function(input, output) {
         selectizeInput("var1", "Choose a variable", choices = var_list, selected = "aval")
     })
     
+    ## showing inputs in tab2 based on variable selected
+    observeEvent(input$var1, {
+        if (input$var1 == "aval") {
+            hide("continuous_vars", anim = T, animType = "fade")
+            hide("discrete_vars", anim = T, animType = "fade")
+            delay(500, show("show_color", anim = T))
+        }
+        else if (input$var1 %notin% cont_vars) {
+            hide("continuous_vars", anim = T, animType = "fade")
+            delay(500, show("discrete_vars", anim = T))
+            delay(500, show("show_color", anim = T))
+        }
+        else {
+            hide("discrete_vars", anim = T, animType = "fade")
+            hide("show_color", anim = T, animType = "fade")
+            delay(500, show("continuous_vars", anim = T))
+        }
+    })
+    
     ## plot2
     output$plot2 = renderPlot({
         req(input$var1)
+        var1 = as.symbol(input$var1)
+        var1 = enquo(var1)
         
+        ## histogram
         if (input$var1 == "aval") {
-            data_merged %>%
+            d3 = data_merged %>% filter(lbtestcd == "ALT")
+            d3 %>%
                 ggplot(aes(x = aval)) + 
-                geom_histogram(bindwidth = 1, color = "black") + 
-                theme_pubr() +
+                {if (input$show_color) geom_histogram(aes(fill = lbtestcd), bins = 50, color = "black")} +
+                {if (!input$show_color) geom_histogram(bins = 50, color = "black", alpha = .5)} +
+                scale_fill_viridis_d(alpha = .5, option = "E") +
+                xlab("Value") +
+                theme2() +
+                labs(title = "Distribution of Values of the 3 tests") +
                 facet_grid(lbtestcd ~ .)
         }
+        ## boxplots
         else if (input$var1 %notin% cont_vars) {
-            var1 = as.symbol(input$var1)
-            var1 = enquo(var1)
-            #print(var1)
-            data_merged %>%
-                {if (input$show_color) ggplot(aes(x = !!var1, y = aval, fill = lbtestcd))} +
-                {if (!input$show_color) ggplot(aes(x = !!var1, y = aval))} +
-                {if (input$violin) geom_violin(width = .6, position = position_dodge())} +
-                {if (input$box) geom_boxplot(width = .4, position = position_dodge(), alpha = .3)} +
-                
-                scale_fill_viridis_d(alpha = .3, option = "E") +
-                theme_classic() +
-                ggpubr::labs_pubr() +
+            d3 = data_merged %>% filter(lbtestcd == "ALT")
+            d3 %>%
+                ggplot(aes(x = !!var1, y = aval)) +
+                {if (input$violin & input$show_color) geom_violin(aes(fill = lbtestcd), width = .6, position = position_dodge())} +
+                {if (input$violin & !input$show_color) geom_violin(width = .6, position = position_dodge())} +
+                {if (input$box & input$show_color) geom_boxplot(aes(fill = lbtestcd), width = .4, position = position_dodge(), alpha = .3)} +
+                {if (input$box & !input$show_color) geom_boxplot(width = .4, position = position_dodge(), alpha = .3)} +
+                scale_fill_viridis_d(alpha = .4, option = "E") +
                 coord_flip() +
-                labs(title = glue("Association of {input$var1} with Lab Measurments")) +
+                labs(title = glue("Boxplots showing association of {input$var1} with each of the tests")) +
+                ylab("Value") +
+                theme2() +
                 facet_grid(~lbtestcd, scales = "fixed")
         }
+        ## scatter plot
         else {
-            var1 = as.symbol(input$var1)
-            var1 = enquo(var1)
-            #print(var1)
             data_merged %>%
-                ggplot(aes(x = aval, y = !!var1)) +
+                ggplot(aes(x = !!var1, y = aval)) +
                 geom_point() +
-                # {if (input$box) geom_boxplot(width = .4, color = "black", position = position_dodge())} +
-                # {if (input$violin) geom_violin(width = .6, position = position_dodge(), alpha = .4)} +
-                scale_fill_viridis_d(alpha = .3, option = "E") +
-                ggpubr::theme_pubr() +
-                coord_flip() +
-                labs(title = glue("Association of {input$var1} with Lab Measurments")) +
+                labs(title = glue("Scatter plot showing correlation of {input$var1} with each of the tests")) +
+                ylab("Value") +
+                theme2() +
+                {if (input$regression_line) geom_smooth(method = "lm", color = "red")} +
                 facet_grid(~lbtestcd, scales = "fixed")
         }
-        
-        
-        
     }, height = 570)
 }
