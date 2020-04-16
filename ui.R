@@ -35,7 +35,11 @@ ui = dashboardPage(
                 id = "continuous_vars",
                 checkboxInput("regression_line", "Regression line")
             ),
-            checkboxInput("show_color", "Show some colors!", value = FALSE)
+            checkboxInput("show_color", "Dude it's shiny, show some colors!", value = FALSE),
+            checkboxInput("single_test_analysis",
+                          "I'd like to do the analysis by single Lab Measurments"),
+            uiOutput("inp_test2")
+            
         ))
     ),
     
