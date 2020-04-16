@@ -1,13 +1,11 @@
 
 
-## installing pacman
+## installing pacman if not already there
 if (!require("pacman")) install.packages("pacman")
 
-## required libraries
-# req_libs = c("tidyverse", "gt", "janitor", "glue", "patchwork",
-#              "ggeasy", "shinyjs", "ggthemes")
+## required libraries, pacman takes care of the installation
 pacman::p_load(shiny, shinydashboard, tidyverse, gt, janitor,
-               glue, patchwork, ggeasy, shinyjs, ggpubr)
+               glue, patchwork, ggeasy, shinyjs, ggpubr, shinycssloaders)
 
 ## reading the data
 data_patient = read_tsv("./Random_PatientLevelInfo_2020.tsv")

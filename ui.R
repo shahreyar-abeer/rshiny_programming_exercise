@@ -48,6 +48,9 @@ ui = dashboardPage(
     
     dashboardBody(
         useShinyjs(),  # needed to use shinyjs
+        options(spinner.type = 2,
+                spinner.color = "#1F77B4",
+                spinner.color.background = "white"), # spinner options
         fluidRow(
             tabBox(
                 id = "tabs",
@@ -59,19 +62,19 @@ ui = dashboardPage(
                     fluidRow(
                         column(
                             width = 6,
-                            plotOutput("plot1")
+                            plotOutput("plot1") %>% withSpinner()
                         ),
                         column(
                             width = 6,
-                            gt_output("patient_info"),
+                            gt_output("patient_info") %>% withSpinner(),
                             br(),
-                            gt_output("patient_data")
+                            gt_output("patient_data") %>% withSpinner()
                         )
                     ),
                     fluidRow(
                         column(
                             width = 12,
-                            plotOutput("plot1b")
+                            plotOutput("plot1b") %>% withSpinner()
                         )
                     )
                 ),
@@ -82,7 +85,7 @@ ui = dashboardPage(
                     fluidRow(
                         column(
                             width = 12,
-                            plotOutput("plot2", height = 570)
+                            plotOutput("plot2", height = 570) %>% withSpinner()
                         )
                     )
                 )
