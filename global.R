@@ -32,8 +32,6 @@ theme1 <- function(...) {
     theme(
       panel.grid.minor.y = element_blank(),
       panel.grid.minor.x = element_blank(),
-      #panel.grid.major.x = element_blank(),
-      #panel.grid.major.y = element_line(),
       strip.background = element_rect(fill = "gray", color = "gray"),
       strip.text = element_text(margin = margin(1, 0, 1, 0, "mm"))
     ) +
@@ -41,7 +39,7 @@ theme1 <- function(...) {
     labs_pubr()
 }
 
-## theme for plots, tab1
+## theme for plot, tab2
 theme2 <- function(...) {
   t <- theme_bw(...) +
     theme(
@@ -70,7 +68,9 @@ make_plot1b = function(df, df2, test) {
 }
 
 ## list of variables for analysis
-var_list = c("bmrkr1", "bmrkr2", "age", "sex", "race", "actarm", "aval")
+var_list = c("Biomarker 1 (cont.)" = "bmrkr1", "Biomarker 2 (disc.)" = "bmrkr2",
+             "Age (cont.)" = "age", "Sex (disc.)" = "sex", "Race (disc.)" = "race",
+             "Actarm (disc.)" = "actarm", "Test Values (cont., dep.)" = "aval")
 
 ## continuous variables
 cont_vars = c("age", "bmrkr1")
