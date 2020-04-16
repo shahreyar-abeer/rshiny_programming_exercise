@@ -70,7 +70,7 @@ make_plot1b = function(df, df2, test) {
 ## list of variables for analysis
 var_list = c("Biomarker 1 (cont.)" = "bmrkr1", "Biomarker 2 (disc.)" = "bmrkr2",
              "Age (cont.)" = "age", "Sex (disc.)" = "sex", "Race (disc.)" = "race",
-             "Actarm (disc.)" = "actarm", "Test Values (cont., dep.)" = "aval")
+             "Actarm (disc.)" = "actarm", "Test Values (var of interest)" = "aval")
 
 ## continuous variables
 cont_vars = c("age", "bmrkr1")
