@@ -205,7 +205,7 @@ server = function(input, output, session) {
                 scale_fill_viridis_d(alpha = .4, option = "E") +
                 coord_flip() +
                 labs(title = glue("Distribution of the {ifelse(isTRUE(input$single_test_analysis), glue('{input$test2} Lab Measurment'), 'the 3 Lab Measurments')} sorted by {var_name}"),
-                     caption = "*The pink dot represents mean") +
+                     caption = "*The pink dot represents mean value") +
                 xlab(var_name) +
                 ylab("Lab Measurment value") +
                 theme2() +

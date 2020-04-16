@@ -14,8 +14,16 @@ ui = dashboardPage(
     ## sidebar
     
     dashboardSidebar(
+        
+        
         div(
             id = "tab1_inputs",
+            div(
+                div(h4("Narrative"), align = "center"),
+                p("This page lets you explore the data for each patient, thoroughly, for each lab measurments."),
+                p("It has a rather serious tone to it."),
+                p("*Note: There are 13 unique variables in the dataset for a patient, all of which are somehow fitted in this page!")
+            ),
             div(h4("Inputs"), align = "center"),
             uiOutput("inp_patient"),
             uiOutput("inp_test"),
@@ -26,6 +34,12 @@ ui = dashboardPage(
         ),
         hidden(div(
             id = "tab2_inputs",
+            div(
+                div(h4("Narrative"), align = "center"),
+                p("This page helps in exploration of data in order to find patterns."),
+                p("Plots are created automatically based on variable types."),
+                p("This page has a lighter tone and tries to get friendly with you!")
+            ),
             div(h4("Inputs"), align = "center"),
             uiOutput("inp2_var1"),
             div(
