@@ -7,7 +7,7 @@ if (!require("pacman")) install.packages("pacman")
 # req_libs = c("tidyverse", "gt", "janitor", "glue", "patchwork",
 #              "ggeasy", "shinyjs", "ggthemes")
 pacman::p_load(shiny, shinydashboard, tidyverse, gt, janitor,
-               glue, patchwork, ggeasy, shinyjs, ggthemes, ggstatsplot, ggpubr)
+               glue, patchwork, ggeasy, shinyjs, ggpubr)
 
 ## reading the data
 data_patient = read_tsv("./Random_PatientLevelInfo_2020.tsv")
@@ -26,6 +26,34 @@ patient_list = unique(data_patient$usubjid)
 ## list of tests
 test_list = unique(data_lab_vals$lbtestcd)
 
+## theme for plots, tab1
+theme1 <- function(...) {
+  t <- theme_minimal(...) +
+    theme(
+      panel.grid.minor.y = element_blank(),
+      panel.grid.minor.x = element_blank(),
+      #panel.grid.major.x = element_blank(),
+      #panel.grid.major.y = element_line(),
+      strip.background = element_rect(fill = "gray", color = "gray"),
+      strip.text = element_text(margin = margin(1, 0, 1, 0, "mm"))
+    ) +
+    easy_legend_at("bottom") +
+    labs_pubr()
+}
+
+## theme for plots, tab1
+theme2 <- function(...) {
+  t <- theme_bw(...) +
+    theme(
+      panel.grid.minor.y = element_blank(),
+      panel.grid.minor.x = element_blank(),
+      strip.background = element_rect(fill = "gray", color = "gray"),
+      strip.text = element_text(margin = margin(1, 0, 1, 0, "mm"))
+    ) +
+    labs_pubr() +
+    easy_legend_at("bottom")
+}
+
 ## function to make plot2
 make_plot1b = function(df, df2, test) {
   df %>%
@@ -35,10 +63,10 @@ make_plot1b = function(df, df2, test) {
     geom_point(size = 4, color = "#1F77B4") +
     scale_x_discrete(limits = df2$avisit) +
     xlab("Visit") +
-    ylab(glue("Measurment ({df$avalu[df$lbtestcd == test][1]})")) +
+    ylab(glue("Value ({df$avalu[df$lbtestcd == test][1]})")) +
     ylim(0, 80) +
     labs(title = glue("{test} Lab Measurments for the patient across visits")) +
-    theme_discrete_chart()
+    theme1()
 }
 
 ## list of variables for analysis
@@ -47,6 +75,7 @@ var_list = c("bmrkr1", "bmrkr2", "age", "sex", "race", "actarm", "aval")
 ## continuous variables
 cont_vars = c("age", "bmrkr1")
 
+## Function to work as not in
 `%notin%` = Negate(`%in%`)
 
 
