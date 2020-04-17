@@ -20,11 +20,12 @@ ui = dashboardPage(
             id = "tab1_inputs",
             div(
                 div(h4("Narrative"), align = "center"),
-                p("This page lets you explore the data for each patient, thoroughly, for each lab measurments."),
-                p("It has a rather serious tone to it."),
-                p("*Note: There are 13 unique variables in the dataset for a patient, all of which are somehow fitted in this page!")
+                p("An app built for exploring data.
+                  This page lets you explore the data for each patient, thoroughly,
+                  for each lab measurments."),
+                p("Choosing a patient and a test shows the lab measurments of the patient across visits"),
+                p("It has a rather serious tone to it.")
             ),
-            div(h4("Inputs"), align = "center"),
             uiOutput("inp_patient"),
             uiOutput("inp_test"),
             checkboxInput("show_threshold", "Threshold?"),
@@ -36,11 +37,12 @@ ui = dashboardPage(
             id = "tab2_inputs",
             div(
                 div(h4("Narrative"), align = "center"),
-                p("This page helps in exploration of data in order to find patterns."),
-                p("Plots are created automatically based on variable types."),
-                p("This page has a lighter tone and tries to get friendly with you!")
+                p("This page helps in explorating data to find patterns."),
+                p("Plots are created automatically based on variable types.
+                  Choosing a variable shows its relation with the lab measurments, default is all 3 tests."),
+                p("This page tries to get friendly with you with its lighter tone.")
             ),
-            div(h4("Inputs"), align = "center"),
+            div(actionButton("data_overview", "Data Overview", icon = icon("database")), align = "center"),
             uiOutput("inp2_var1"),
             div(
                 id = "discrete_vars",
@@ -62,7 +64,17 @@ ui = dashboardPage(
     ## body
     
     dashboardBody(
-        useShinyjs(),  # needed to use shinyjs
+        useShinyjs(),  # needed for shinyjs
+        
+        ## some html/css
+        tags$head(tags$style(HTML(
+            "section.sidebar .shiny-input-container {
+            padding: 2px 15px 0px 15px;
+            }
+            form-group {
+            margin-bottom:10px;
+            }
+            "))),
         fluidRow(
             tabBox(
                 id = "tabs",
