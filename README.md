@@ -26,7 +26,7 @@ I have worked on the project for a bit longer than the expected time.
 Now the reason behind this is a bit abstract.  
 
 > To me, developing shiny is an art.  
-> Now tell me this, how much time would you give a poet to write a 4 liner poem?  
+> Tell me this, how much time would you give a poet to write a 4 liner poem?  
 > I say coding is just peoms with Mathematics. You write something and you delete it, over and over, until you are happy with it; isn't that how poems are written?    
 > 
 
