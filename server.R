@@ -6,6 +6,10 @@ server = function(input, output, session) {
     ##-----------------------------------------------------------------------------------
     ## tab1
     
+    output$str_data = renderPrint({
+        glimpse(as.tibble(data_merged), width = 40)
+    })
+    
     ## show inputs based on active tab
     observeEvent(input$tabs, {
         if (input$tabs == "Patient by Patient") {
@@ -124,6 +128,19 @@ server = function(input, output, session) {
     
     ##------------------------------------------------------------------------------------
     ## tab2
+    
+    ## show the data as a modal
+    observeEvent(input$data_overview, {
+        showModal(
+            modalDialog(
+                title = "An overview of the data",
+                verbatimTextOutput("str_data"),
+                p("<fct> represents Categorical variables (12)"),
+                p("<dbl> represents Numeric variables (3)"),
+                easyClose = T
+            )
+        )
+    })
     
     ## variable to select for showing association
     output$inp2_var1 = renderUI({
