@@ -15,11 +15,11 @@ ui = dashboardPage(
             id = "tab1_inputs",
             div(
                 div(h4("Narrative"), align = "center"),
-                p("An app built for exploring data.
+                p("An app built for exploratory analysis.
                   This page lets you explore the data for each patient, thoroughly,
                   for each lab measurments."),
-                p("Choosing a patient and a test shows the lab measurments of the patient across visits"),
-                p("It has a rather serious tone to it.")
+                p("Choosing a patient and a test shows the lab measurments of the patient across visits
+                  in a plot along with the data.")
             ),
             uiOutput("inp_patient"),
             uiOutput("inp_test"),
@@ -32,10 +32,9 @@ ui = dashboardPage(
             id = "tab2_inputs",
             div(
                 div(h4("Narrative"), align = "center"),
-                p("This page helps in explorating data to find patterns."),
+                p("This page helps in finding patterns among variables."),
                 p("Plots are created automatically based on variable types.
-                  Choosing a variable shows its relation with the lab measurments, default is all 3 tests."),
-                p("This page tries to get friendly with you with its lighter tone.")
+                  Choosing a variable shows its relation with the lab measurments, default is all 3 tests.")
             ),
             div(actionButton("data_overview", "Data Overview", icon = icon("database")), align = "center"),
             uiOutput("inp2_var1"),
