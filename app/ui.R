@@ -1,21 +1,16 @@
 
 
-
 ui = dashboardPage(
     
     ##-----------------------------------------------------------------
     ## header
-    
     dashboardHeader(
         title = "Some Cool Name"
     ),
     
     ##-----------------------------------------------------------------
     ## sidebar
-    
     dashboardSidebar(
-        
-        
         div(
             id = "tab1_inputs",
             div(
@@ -62,7 +57,6 @@ ui = dashboardPage(
     
     ##-----------------------------------------------------------------
     ## body
-    
     dashboardBody(
         useShinyjs(),  # needed for shinyjs
         
