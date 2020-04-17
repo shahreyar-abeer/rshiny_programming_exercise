@@ -226,6 +226,7 @@ server = function(input, output, session) {
                 labs(title = glue("Distribution of the {ifelse(isTRUE(input$single_test_analysis), glue('{input$test2} Lab Measurment'), 'the 3 Lab Measurments')} sorted by {var_name}"),
                      caption = "*The pink dot represents mean value.") +
                 xlab(var_name) +
+                ylim(0, 80) +
                 ylab("Lab Measurment value") +
                 theme2() +
                 facet_grid(~lbtestcd, scales = "fixed")

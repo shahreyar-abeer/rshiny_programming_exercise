@@ -18,8 +18,8 @@ ui = dashboardPage(
                 p("An app built for exploratory analysis.
                   This page lets you explore the data for each patient, thoroughly,
                   for each lab measurments."),
-                p("Choosing a patient and a test shows the lab measurments of the patient across visits
-                  in a plot along with the data.")
+                p("Choosing a patient and a test shows the lab measurments of the patient
+                  for the test across visits. (Plot & Data)")
             ),
             uiOutput("inp_patient"),
             uiOutput("inp_test"),

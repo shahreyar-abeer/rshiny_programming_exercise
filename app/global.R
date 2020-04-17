@@ -64,7 +64,7 @@ make_plot1b = function(df, df2, test) {
     xlab("Visit") +
     ylab(glue("Lab Measurment value ({df$avalu[df$lbtestcd == test][1]})")) +
     ylim(0, 80) +
-    labs(title = glue("{test} Lab Measurments for the patient across visits")) +
+    labs(title = glue("{test} Lab Measurments for the patient across visits.")) +
     theme1()
 }
 
