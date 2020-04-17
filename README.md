@@ -6,7 +6,7 @@ A Shiny programming exercise for developer evaluation.
 
 1. Download or clone the repo.  
 2. Open the `rshiny_programming_exercise.Rproj` file. (It should automatically open in RStudio).  
-3. Open any one of `ui.R` or `server.R` or `global.R` from the app/ directory.  
+3. Open any one of `ui.R` or `server.R` or `global.R` from the app/ directory. (If they are not open already)  
 4. Press **Run App** on the top-right corner of the script.  
 
 Or, after step 2, you can do the following:
@@ -27,7 +27,7 @@ Now the reason behind this is a bit abstract.
 
 > To me, developing shiny is an art.  
 > Tell me this, how much time would you give a poet to write a 4 liner poem?  
-> I say coding is just peoms with Mathematics. You write something and you delete it, over and over, until you are happy with it; isn't that how poems are written? And I won't mention craftsmanship (which I don't have) is required.
+> I say coding is just peoms with Mathematics. You write something and you delete it, over and over, until you are happy with it; isn't that how poems are written? And I won't mention craftsmanship that is required!
 > 
 
 <img src="poet.jpg" width="400">  
