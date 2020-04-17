@@ -113,7 +113,7 @@ server = function(input, output, session) {
         }
         
     })
-     ##----------------------------------------------------------------------------------
+    ##----------------------------------------------------------------------------------
     ## second plot on first tab, joins using patchwork's '|'
     output$plot1b = renderPlot({
         if (input$show_others) {
@@ -244,3 +244,5 @@ server = function(input, output, session) {
         }
     }, height = 570)
 }
+
+
