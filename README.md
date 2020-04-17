@@ -32,6 +32,6 @@ Now the reason behind this is a bit abstract.
 
 <img src="poet.jpg" width="400">  
 
-> Tell me this guy's not talking about programming!
+> Tell me this guy is **not** talking about programming!
 
 ---
