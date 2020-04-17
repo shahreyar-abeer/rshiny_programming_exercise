@@ -10,11 +10,11 @@ server = function(input, output, session) {
     observeEvent(input$tabs, {
         if (input$tabs == "Patient by Patient") {
             hide("tab2_inputs", anim = T, animType = "fade")
-            delay(500, show("tab1_inputs", anim = T))
+            delay(400, show("tab1_inputs", anim = T))
         }
         else {
             hide("tab1_inputs", anim = T, animType = "fade")
-            delay(500, show("tab2_inputs", anim = T))
+            delay(400, show("tab2_inputs", anim = T))
         }
             
     })
@@ -169,17 +169,17 @@ server = function(input, output, session) {
         if (input$var1 == "aval") {
             hide("continuous_vars", anim = TRUE, animType = "fade")
             hide("discrete_vars", anim = TRUE, animType = "fade")
-            delay(500, show("show_color", anim = TRUE))
+            delay(400, show("show_color", anim = TRUE))
         }
         else if (input$var1 %notin% cont_vars) {
             hide("continuous_vars", anim = TRUE, animType = "fade")
-            delay(500, show("discrete_vars", anim = TRUE))
-            delay(500, show("show_color", anim = TRUE))
+            delay(400, show("discrete_vars", anim = TRUE))
+            delay(400, show("show_color", anim = TRUE))
         }
         else {
             hide("discrete_vars", anim = T, animType = "fade")
             hide("show_color", anim = T, animType = "fade")
-            delay(500, show("continuous_vars", anim = T))
+            delay(400, show("continuous_vars", anim = T))
         }
     })
     
@@ -208,8 +208,8 @@ server = function(input, output, session) {
                 {if (!input$show_color) geom_histogram(bins = 50, color = "black", alpha = .5)} +
                 scale_fill_viridis_d(alpha = .5, option = "E") +
                 xlab("Lab Measurment value") +
-                theme2() +
                 labs(title = glue("Distribution of the {ifelse(isTRUE(input$single_test_analysis), glue('{input$test2} Lab Measurment'), 'the 3 Lab Measurments')}")) +
+                theme2() +
                 facet_grid(lbtestcd ~ .)
         }
         ## boxplots
@@ -238,8 +238,8 @@ server = function(input, output, session) {
                 labs(title = glue("Correlation between the {ifelse(isTRUE(input$single_test_analysis), glue('{input$test2} Lab Measurment'), '3 Lab Measurments')} and {var_name}")) +
                 xlab(var_name) +
                 ylab("Lab Measurment value") +
-                theme2() +
                 {if (input$regression_line) geom_smooth(method = "lm", color = "red")} +
+                theme2() +
                 facet_grid(~lbtestcd, scales = "fixed")
         }
     }, height = 570)
