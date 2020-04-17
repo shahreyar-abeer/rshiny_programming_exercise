@@ -18,7 +18,8 @@ data_lab_vals = data_lab_vals %>% clean_names()
 ## joining them
 data_merged = right_join(data_patient, data_lab_vals, by = c("usubjid", "studyid")) %>% 
   mutate(aval = round(aval, 1),
-         bmrkr1 = round(bmrkr1, 1))
+         bmrkr1 = round(bmrkr1, 1)) %>% 
+  mutate_if(is.character, as.factor)
 
 ## list of patients
 patient_list = unique(data_patient$usubjid)
