@@ -27,7 +27,7 @@ Now the reason behind this is a bit abstract.
 
 > To me, developing shiny is an art.  
 > Tell me this, how much time would you give a poet to write a 4 liner poem?  
-> I say coding is just peoms with Mathematics. You write something and you delete it, over and over, until you are happy with it; isn't that how poems are written?    
+> I say coding is just peoms with Mathematics. You write something and you delete it, over and over, until you are happy with it; isn't that how poems are written? And I won't mention craftsmanship (which I don't have) is required.
 > 
 
 <img src="poet.jpg" width="400">  
