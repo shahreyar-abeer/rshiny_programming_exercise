@@ -13,3 +13,25 @@ Or, after step 2, you can do the following:
 
 3. Type `setwd("./app")` in the console.  
 4. And then type `shiny::runApp()`.  
+
+The first time of running, the program will *automatically install* the required packages.  
+Just make sure you have a couple of minutes to spare!  
+
+Oh and if you have an RStudio Cloud id, you can find an online version of the project [here.](https://rstudio.cloud/project/1163822)  
+
+### Some final notes  
+
+It was mentioned in the instuctions.txt file that the expected time to complete this task was 4-5 hours.  
+I have worked on the project for a bit longer than the expected time.  
+Now the reason behind this are a bit abstract.  
+
+> To me, developing shiny is an art.  
+> Now tell me this, how much time would you give a poet to write a 4 liner poem?  
+> I say coding is just peoms with Mathematics. You write something and you delete it, over and over, until you are happy with it; isn't that how poems are written?    
+> 
+
+<img src="poet.jpg" width="400">  
+
+> Tell me he's not talking about programming!
+
+---
