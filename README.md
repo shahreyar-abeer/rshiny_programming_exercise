@@ -20,6 +20,8 @@ Just make sure you have a couple of minutes to spare!
 
 Oh and if you have an RStudio Cloud id, you can find an online version of the project [here.](https://rstudio.cloud/project/1163822)  
 
+*Note: Due to some technical reasons, the app is not hosted on shinyapps.io*
+
 ### Some final notes  
 
 It was mentioned in the instuctions.txt file that the expected time to complete this task was 4-5 hours.  
