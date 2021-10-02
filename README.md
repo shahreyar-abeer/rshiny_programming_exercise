@@ -1,5 +1,7 @@
 # rshiny_programming_exercise  
 
+Please find the app hosted online [here](https://shahreyar-abeer.shinyapps.io/shiny_exercise/)
+
 A Shiny programming exercise for developer evaluation.  
 This is a simple shiny app designed to do some exploratory analysis. The data set is randomly generated and doesn't convey any particular information. The main goal of the app is to assess the candidate's shiny skills.
 
